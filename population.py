@@ -64,41 +64,44 @@ class Person(object):
                 return True
 
 class Population(object):
-    def __init__(self, name, people, percent_vaccinated=0.0, pathogen, initial_infected):
+    def __init__(self, name, people, pathogen, initial_infected, percent_vaccinated=0.0):
         self.name = name
         self.percent_vaccinated = percent_vaccinated
         self.people = []
-        for range(0, initial_infected):
-            self.people += Person(False, infection=pathogen)
-        vaccinated_people_num = initial_infected * percent_vaccinated
-        for range(0, vaccinated_people_num)):
-            self.people += Person(True, infection=None)
-        for range(0 (people - (vaccinated_people_num + initial_infected))):
-            self.people += Person(False, infection=None)
+        vaccinated_people_num = int(initial_infected * percent_vaccinated)
+        for i in range(0, initial_infected):
+            self.people += [Person(False, infection=pathogen)]
+        for i in range(0, vaccinated_people_num):
+            self.people += [Person(True, infection=None)]
+        for i in range(0, (people - (vaccinated_people_num + initial_infected))):
+            self.people += [Person(False, infection=None)]
 
-    def number_infected(self):
+    def get_number_infected(self):
         people_infected = 0
         for person in self.people:
-            if self.infection not None:
+            if person.infection is not None:
                 people_infected +=1
         return people_infected
 
-    def number_dead()
+    def get_number_dead(self):
         dead = 0
         for person in self.people:
-            if self.is_dead:
+            if person.is_dead:
                 dead +=1
         return dead
 
     def print_info(self):
+        population_num = str( len(self.people) )
+        infected_num = str( self.get_number_infected() )
+        dead_num = str( self.get_number_dead() )
         vaccination_rate = str( int( self.percent_vaccinated * 100 ) ) + "%"
         
-        print("This population is known as", self.name, ". \n", vaccination_rate, "of the humans in this population are vaccinated."
+        print("This population is known as", self.name, ". \n", vaccination_rate, "of the humans in this population are vaccinated.")
 
-        print("There") 
-        )
+        print("Out of " + population_num + " people, " + infected_num, "are infected and " + dead_num + " have died.")
 
 def test():
+    # Population(self, name, people, pathogen, initial_infected, percent_vaccinated=0.0)
     stale_memes = Pathogen("stale memes", 0.0, 0.0)
     dank_memes = Pathogen("dank memes", 1.0, 1.0)
     person1 = Person()
@@ -113,7 +116,7 @@ def test():
     person2.get_infected(stale_memes)
     person2.get_infected(dank_memes)
     person2.did_die()
-    make_school = Population("Make School", 100, 0.5)
+    make_school = Population("Make School", 100, dank_memes, 2, 0.5)
     make_school.print_info()
 
 test()
