@@ -68,11 +68,16 @@ class Population(object):
         self.name = name
         self.percent_vaccinated = percent_vaccinated
         self.people = []
-        vaccinated_people_num = int(initial_infected * percent_vaccinated)
+        vaccinated_people_num = int( people * percent_vaccinated)
+        # initialize patient zeroes
+        print(vaccinated_people_num)
         for i in range(0, initial_infected):
             self.people += [Person(False, infection=pathogen)]
+        # initialize number of vaccinated peeps
+        # TODO: people are not being properly vaccinated. THIS IS A LOGIC PROBLEM
         for i in range(0, vaccinated_people_num):
             self.people += [Person(True, infection=None)]
+        # add everyone else to the population
         for i in range(0, (people - (vaccinated_people_num + initial_infected))):
             self.people += [Person(False, infection=None)]
 
@@ -90,6 +95,15 @@ class Population(object):
                 dead +=1
         return dead
 
+    def mingle(self, interactions, pathogen):
+        # interactions defines how sociable people in this population are
+        for person in self.people:
+            for i in range(0, interactions):
+                friend = random.choice(self.people)
+                # TODO adapt this for multiple pathogens
+                if friend.infection is not None:
+                        person.get_infected(pathogen)
+
     def print_info(self):
         population_num = str( len(self.people) )
         infected_num = str( self.get_number_infected() )
@@ -104,19 +118,21 @@ def test():
     # Population(self, name, people, pathogen, initial_infected, percent_vaccinated=0.0)
     stale_memes = Pathogen("stale memes", 0.0, 0.0)
     dank_memes = Pathogen("dank memes", 1.0, 1.0)
-    person1 = Person()
-    person1.print_greeting()
-    person1.get_infected(stale_memes)
-    person1.get_infected(dank_memes)
-    person1.print_greeting()
-    person1.did_die()
-    print("above human should have died\n")
-    person2 = Person()
-    person2.is_vaccinated = True
-    person2.get_infected(stale_memes)
-    person2.get_infected(dank_memes)
-    person2.did_die()
-    make_school = Population("Make School", 100, dank_memes, 2, 0.5)
+    # person1 = Person()
+    # person1.print_greeting()
+    # person1.get_infected(stale_memes)
+    # person1.get_infected(dank_memes)
+    # person1.print_greeting()
+    # person1.did_die()
+    # print("above human should have died\n")
+    # person2 = Person()
+    # person2.is_vaccinated = True
+    # person2.get_infected(stale_memes)
+    # person2.get_infected(dank_memes)
+    # person2.did_die()
+    make_school = Population("Make School", 1000, dank_memes, 2, 0.5)
+    make_school.print_info()
+    make_school.mingle(10, dank_memes)
     make_school.print_info()
 
 test()

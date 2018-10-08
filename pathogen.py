@@ -26,6 +26,6 @@ def test():
     ebola = Pathogen("ebola", 0.70, 0.25)
     ebola.print_info()
 
-test()
+# test()
 
 
