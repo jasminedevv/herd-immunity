@@ -116,8 +116,8 @@ class Population(object):
 
 def test():
     # Population(self, name, people, pathogen, initial_infected, percent_vaccinated=0.0)
-    stale_memes = Pathogen("stale memes", 0.0, 0.0)
-    dank_memes = Pathogen("dank memes", 1.0, 1.0)
+    stale_memes = Pathogen("pathogen1", 0.0, 0.0)
+    dank_memes = Pathogen("pathogen2", 1.0, 1.0)
     # person1 = Person()
     # person1.print_greeting()
     # person1.get_infected(stale_memes)
@@ -130,9 +130,9 @@ def test():
     # person2.get_infected(stale_memes)
     # person2.get_infected(dank_memes)
     # person2.did_die()
-    make_school = Population("Make School", 1000, dank_memes, 2, 0.5)
+    make_school = Population("Make School", 20, dank_memes, 2, 0.5)
     make_school.print_info()
-    make_school.mingle(10, dank_memes)
+    make_school.mingle(2, dank_memes)
     make_school.print_info()
 
 test()

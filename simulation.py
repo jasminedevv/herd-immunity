@@ -1,6 +1,8 @@
 from pathogen import Pathogen
+from population import Population, Person
 import sys
 
+# helper class handles IO
 class Simulation(object):
     def __init__(self):
         self.pathogen = Pathogen()
@@ -56,9 +58,11 @@ class Simulation(object):
             infectiousness = sys.argv[5]
             initial_infected = sys.argv[6]
         self.sanitize_input(population_size, vaccination_percentage, pathogen_name, mortality_rate, infectiousness, initial_infected)
-        population_size = 
-        vaccination_percentage = 
-        pathogen_name = 
-        mortality_rate = 
-        infectiousness = 
-        initial_infected = 
+        self.population_size = population_size
+        self.vaccination_percentage = self.vaccination_percentage
+        self.pathogen_name = pathogen_name
+        self.mortality_rate = mortality_rate
+        self.infectiousness = infectiousness
+        initial_infected = initial_infected
+
+def test():
