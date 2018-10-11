@@ -1,0 +1,21 @@
+
+0: 24 infected, 0 dead, 10 now immune
+1: 4 infected, 9 dead, 21 now immune
+2: 32 infected, 9 dead, 21 now immune
+3: 11 infected, 20 dead, 31 now immune
+4: 60 infected, 20 dead, 31 now immune
+5: 28 infected, 29 dead, 54 now immune
+6: 64 infected, 29 dead, 54 now immune
+7: 51 infected, 37 dead, 59 now immune
+8: 63 infected, 37 dead, 59 now immune
+9: 59 infected, 39 dead, 61 now immune
+0: 24 infected, 0 dead, 10 now immune
+1: 4 infected, 9 dead, 21 now immune
+2: 32 infected, 9 dead, 21 now immune
+3: 11 infected, 20 dead, 31 now immune
+4: 60 infected, 20 dead, 31 now immune
+5: 28 infected, 29 dead, 54 now immune
+6: 64 infected, 29 dead, 54 now immune
+7: 51 infected, 37 dead, 59 now immune
+8: 63 infected, 37 dead, 59 now immune
+9: 59 infected, 39 dead, 61 now immune

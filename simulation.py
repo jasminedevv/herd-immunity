@@ -78,24 +78,17 @@ class Simulation(object):
         # leaving out name for the user generated stuff
         self.population = Population(name="Simulated Population", people=self.population_size, pathogen=self.pathogen, initial_infected=self.initial_infected, percent_vaccinated=self.percent_vaccinated)
     
-    def run(self, logger, time_steps=10, is_infinite=True):
+    def run(self, logger, time_steps=10, looping=True):
         id = 0
-        if is_infinite:
-            # TODO this loop is messed up somehow
-            while len(self.population.the_living) >= 0 and self.population.get_number_infected() > 0:
-                self.population.mingle(2, self.pathogen)
-                logger.log(self, id)
-                id += 1
-                self.population.bury_the_dead()
-                logger.log(self, id)
-                id += 1
-        else:
-            for i in range(0, time_steps):
-                # the 2 here makes each person interact with 100 people every time step
-                self.population.mingle(2, self.pathogen)
-                logger.log(self)
-                # TODO fix bury the dead I think it's messed up
-                self.population.bury_the_dead()
+        logger.write_start_stats(self)
+        while looping and len(self.population.the_living) >= 0 and self.population.get_number_infected() > 0 and self.population.get_number_immune() is not len(self.population.the_living):
+            self.population.mingle(2, self.pathogen)
+            logger.log(self, id)
+            id += 1
+            self.population.bury_the_dead()
+            logger.log(self, id)
+            id += 1
+        logger.write_end_stats(self)
 
 
 def test():
