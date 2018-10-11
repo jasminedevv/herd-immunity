@@ -2,13 +2,14 @@ from pathogen import Pathogen
 from population import Population, Person
 import sys
 import os
+from logger import logger
 
 # helper class handles IO
 class Simulation(object):
     def __init__(self):
         self.pathogen = None
         self.population = None
-        self.file_name = "{}_simulation_pop_{}_vp_{}_infected_{}.txt".format(self.pathogen.name, self.population.size, self.population.percent_vaccinated, self.population.initial_infected) 
+        
     # ERROR HANDLING
     # this function is called if the user inputs something incorrectly
     def user_error(self):
@@ -44,18 +45,15 @@ class Simulation(object):
             print("Number of people initially infected needs to be a postive int.\n")
             self.user_error()
 
-    # broken af     
+    # gets the user input and sorta sanitizes it
     def get_user_input(self, user_messed_up=False):
-        print(len(sys.argv))
         if len(sys.argv) is not 7 or user_messed_up:
             population_size = int( input("Enter a population size > ") )
-            print(population_size)
             percent_vaccinated = float( input("What percentage of people in this population are vaccinated? > ") )
             pathogen_name = str( input("What is this pathogen called? > ") )
             mortality_rate = float( input("What is this pathogen's mortality rate? > ") )
             infectiousness = float( input("How infectious is it? > ") )
             initial_infected = int( input("How many people are initially infected?") )
-            print(initial_infected)
         else:
             population_size = int( sys.argv[1] )
             percent_vaccinated = float( sys.argv[2] )
@@ -63,8 +61,6 @@ class Simulation(object):
             mortality_rate = float( sys.argv[4] )
             infectiousness = float( sys.argv[5] )
             initial_infected = int( sys.argv[6] )
-
-        print("\n\nUser input acquired.\n\n")
         # this function currently is useless
         self.sanitize_input(population_size, percent_vaccinated, pathogen_name, mortality_rate, infectiousness, initial_infected)
         # TODO clean this up a little
@@ -81,11 +77,25 @@ class Simulation(object):
         # create the population
         # leaving out name for the user generated stuff
         self.population = Population(name="Simulated Population", people=self.population_size, pathogen=self.pathogen, initial_infected=self.initial_infected, percent_vaccinated=self.percent_vaccinated)
-
     
-    def run(self, time_steps):
-        for i in range(0, time_steps):
-            self.population.mingle(100, self.pathogen)
+    def run(self, logger, time_steps=10, is_infinite=True):
+        id = 0
+        if is_infinite:
+            # TODO this loop is messed up somehow
+            while len(self.population.the_living) >= 0 and self.population.get_number_infected() > 0:
+                self.population.mingle(2, self.pathogen)
+                logger.log(self, id)
+                id += 1
+                self.population.bury_the_dead()
+                logger.log(self, id)
+                id += 1
+        else:
+            for i in range(0, time_steps):
+                # the 2 here makes each person interact with 100 people every time step
+                self.population.mingle(2, self.pathogen)
+                logger.log(self)
+                # TODO fix bury the dead I think it's messed up
+                self.population.bury_the_dead()
 
 
 def test():
@@ -100,9 +110,9 @@ def test():
     # sim.percent_vaccinated = 0.2
 
     sim.get_user_input()
-    # ^ broken ^
     sim.initialize()
-    sim.run(2)
+    logger.write_start_stats(sim)
+    sim.run(logger)
 
 
 test()

@@ -1,27 +1,60 @@
+from jinja2 import Template, Environment, FileSystemLoader
+
+# messy and idk how any of this works but I am DETERMINED to add templating gdi
+def float_to_percent(my_float):
+    print("\n\nI ran\n\n")
+    return str( int(my_float * 100) ) + "%"
+
+env = Environment(loader=FileSystemLoader(searchpath="."), trim_blocks=True, lstrip_blocks=True)
+
+env.filters["to_percent"] = float_to_percent
+
+# keeps track of interactions and writes a summary to a jinja template
 class Logger(object):
-	def __init__(self, file_name):
-		self.file_name = file_name
+    def __init__(self):
+        self.custom = ["","",""]
+        # not sure I need to init anything
+        # might actually put these in Simulation instead
 
-	def write(self, pop_size, vacc_percentage, virus_name, mortality_rate, basic_repro_num):
-		self.file = open(self.file_name, "w+")
-		self.file.write("Population Size: {}\tVaccination Percentage: {}\tVirus Name: {}\tMortality Rate: {}\tReproduction: {}\n".format(pop_size, vacc_percentage, virus_name, mortality_rate, basic_repro_num))
-		self.file.close()
+    def write_start_stats(self, sim):
+        # code quality going down the drain
+        self.custom[0] = float_to_percent(sim.percent_vaccinated)
+        self.custom[1] = float_to_percent(sim.pathogen.mortality_rate)
+        self.custom[2] = float_to_percent(sim.pathogen.contagiousness)
+        file_name = "logs/{}_simulation_pop_{}_vp_{}_infected_{}.md".format(sim.pathogen.name, sim.population.size, sim.population.percent_vaccinated, sim.population.initial_infected) 
+        t = open("start_stats.md", 'r').read()
+        template = Template(t)
+        summary = template.render(population=sim.population, pathogen=sim.pathogen, c = self.custom)
+        file = open(file_name, "w+")
+        file.write(summary)
+        file.close()
 
-	def log_interaction(self, person1, person2, did_infect, person2_vacc):
-		self.file = open(self.file_name, "a")
-		self.file.write("Interaction between patient {} and citizen{}\nCitizen {} Vaccinated: {}\n".format(person1._id, person2._id, person2._id, person2_vacc))
-		if did_infect == True:
-			self.file.write("Infection was spread\n")
-		self.file.close()
+    def write_end_stats(self, sim):
+        file_name = "summaries/{}_simulation_pop_{}_vp_{}_infected_{}.md".format(sim.pathogen.name, sim.population.size, sim.population.percent_vaccinated, sim.population.initial_infected) 
+        t = open("end_stats.md", 'r').read()
+        template = Template(t)
+        dead = len(sim.population.the_dead)
+        summary = template.render(population=sim.population, pathogen=sim.pathogen, dead=dead)
+        file = open(file_name, "w+")
+        file.write(summary)
+        file.close()
 
-	def log_infection_survival(self, person, did_die_from_infection):
-		self.file = open(self.file_name, "a")
-		if did_die_from_infection == True:
-			self.file.write("Patient {} was killed from infection\n".format(person._id))
-		else:
-			self.file.write("Patient {} survived the infection\n".format(person._id))
-		self.file.close()
+    def log_line(self, line):
+        line = line
 
-	def log_ending_stats(self, total_dead, counter):
-		self.file = open(self.file_name, "a")
-		self.file.write("Total Deaths: {}\nNumber of Weeks: {}".format(total_dead, counter))
+    def log(self, sim, id):
+        file_name = "logs/{}_simulation_pop_{}_vp_{}_infected_{}.md".format(sim.pathogen.name, sim.population.size, sim.population.percent_vaccinated, sim.population.initial_infected) 
+        file = open(file_name, "a")
+
+        infected = sim.population.get_number_infected()
+        dead = len(sim.population.the_dead)
+        now_immune = sim.population.get_number_immune()
+
+        info = "\n{}: {} infected, {} dead, {} now immune".format(id, infected, dead, now_immune)
+
+        file.write(info)
+
+        file.close()
+
+logger = Logger()
+

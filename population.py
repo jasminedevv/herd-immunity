@@ -16,6 +16,8 @@ class Person(object):
         self.infection = infection
         self.is_vaccinated = is_vaccinated
         self.is_dead = False
+        self.greetings = []
+        self.immune = False
     # decides if a person 
     def print_greeting(self):
         print("Hello! My name is", self.name, "(human #", self.id,")")
@@ -29,7 +31,7 @@ class Person(object):
             print("Currently I am infected with", self.infection.name)
     def did_die(self):
         if not isinstance(self.infection, Pathogen):
-            print(self.name, "(human #", self.id,") was vaccinated and did not die.\n")
+            # print(self.name, "(human #", self.id,") was vaccinated and did not die.\n")
             return False
         elif self.is_vaccinated:
             print("ALERT! did_die method was called on a vaccinated person. That shouldn't happen.")
@@ -37,7 +39,7 @@ class Person(object):
         else:
             luck = random.uniform(0, 1)
             if luck > self.infection.mortality_rate:
-                print(self.name, "survives the infection!")
+                # print(self.name, "survives the infection!")
                 # person survives the infection and stops being sick, they are now immune to the virus
                 self.infection = None
                 # could say if pathogen is a virus they become vaccinated
@@ -46,27 +48,39 @@ class Person(object):
             else:
                 # person dies
                 # add id after name
-                print(self.name, "(human #", self.id, ") has died of", self.infection.name)
+                # print(self.name, "(human #", self.id, ") has died of", self.infection.name)
                 self.is_dead = True
                 return True
-    
-    def get_infected(self, pathogen):
-        print(self.name, "(human #", self.id,") has been exposed to", pathogen.name, "!")
-        if self.is_vaccinated:
-            print("But they are vaccinated so they do not contract it.")
-            # vaccinated people do not get infected
+
+    def battle_infection(self, pathogen):
+        luck = random.uniform(0, 1)
+        if luck > pathogen.contagiousness:
+            # print("They fight off the infection and do not contract it.")
+            # person does not catch the infection
             return False
         else:
-            luck = random.uniform(0, 1)
-            if luck > pathogen.contagiousness:
-                print("They fight off the infection and do not contract it.")
-                # person does not catch the infection
-                return False
-            else:
-                # person catches the infection
-                print("And they catch it!", self.name, "is now infected with", pathogen.name)
-                self.infection = pathogen
-                return True
+            # print("And they catch it!", self.name, "is now infected with", pathogen.name)
+            self.infection = pathogen
+            return True
+    
+    def interact(self, friend):
+        # minor shortcut. If one of them is vaccinated there can be no transmission
+        if self.is_vaccinated or friend.is_vaccinated:
+            print("No pathogen was transmitted between human#{} and human#{}.".format(self.id, friend.id))
+        # neither is infected
+        if self.infection is None and friend.infection is None:
+            print("human#{} and human#{} interacted but they were both healthy.".format(self.id, friend.id))
+        # both are infected so nothing is transmitted
+        elif self.infection is not None and friend.infection is not None:
+            print("human#{} and human#{} interacted but they were both infected.".format(self.id, friend.id))
+        # if self is infected but friend is not, expose friend to infection
+        elif self.infection is not None and friend.infection is None:
+            print("human#{} has exposed human#{} to {}!".format(self.id, friend.id, self.infection.name))
+            friend.battle_infection(self.infection)
+        # if self is not infected but friend is, expose self to infection
+        elif self.infection is None and friend.infection is not None:
+            print("human#{} has exposed human#{} to {}!".format( friend.id, self.id, friend.infection.name))
+            self.battle_infection(friend.infection)
 
 class Population(object):
     def __init__(self, name, people, pathogen, initial_infected, percent_vaccinated=0.0):
@@ -99,24 +113,34 @@ class Population(object):
                 people_infected +=1
         return people_infected
 
+    def get_number_immune(self):
+        people_immune = 0
+        for person in self.the_living:
+            if person.immune:
+                people_immune +=1
+        return people_immune
+
+    # TODO: currently bury the dead wipes all infection from the game
     def mingle(self, interactions, pathogen):
         # interactions defines how sociable people in this population are
         # each person interacts with a number of friends equal to interactions
         for person in self.the_living:
-            for i in range(0, interactions):
+            person.greetings = []
+            while len(person.greetings) < interactions:
                 friend = random.choice(self.the_living)
+                # makes sure neither of them have seen each other today
+                if friend not in person.greetings and person not in friend.greetings:
                 # TODO adapt this for multiple pathogens
-                if friend.infection is not None:
-                        person.get_infected(friend.infection)
+                    person.interact(friend)
+                    person.greetings.append(friend)
 
-    def battle_infection(self):
+    def bury_the_dead(self):
         print("\nThe infected are battling the infection!\n")
         for person in self.the_living:
             if person.infection is not None and not person.is_vaccinated:
                 if person.did_die():
                     self.the_living.remove(person)
                     self.the_dead.append(person)
-
 
     def print_info(self):
         population_num = str( len(self.the_living) + len(self.the_dead) )
@@ -146,9 +170,9 @@ def test():
     make_school = Population("Make School", 30, virus, 3, 0.5)
     make_school.print_info()
     make_school.mingle(2, virus)
-    make_school.battle_infection()
+    make_school.bury_the_dead()
     make_school.print_info()
 
-test()
+# test()
 
 
