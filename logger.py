@@ -1,12 +1,12 @@
-from jinja2 import Template, Environment, FileSystemLoader
+# from jinja2 import Template, Environment, FileSystemLoader
 
 # messy and idk how any of this works but I am DETERMINED to add templating gdi
 def float_to_percent(my_float):
     return str( int(my_float * 100) ) + "%"
 
-env = Environment(loader=FileSystemLoader(searchpath="."), trim_blocks=True, lstrip_blocks=True)
+# env = Environment(loader=FileSystemLoader(searchpath="."), trim_blocks=True, lstrip_blocks=True)
 
-env.filters["to_percent"] = float_to_percent
+# env.filters["to_percent"] = float_to_percent
 
 # keeps track of interactions and writes a summary to a jinja template
 class Logger(object):
@@ -21,22 +21,33 @@ class Logger(object):
 
     def write_start_stats(self, sim):
         # code quality going down the drain
-        self.custom[0] = float_to_percent(sim.percent_vaccinated)
-        self.custom[1] = float_to_percent(sim.pathogen.mortality_rate)
-        self.custom[2] = float_to_percent(sim.pathogen.contagiousness)
+        # self.custom[0] = float_to_percent(sim.percent_vaccinated)
+        # self.custom[1] = float_to_percent(sim.pathogen.mortality_rate)
+        # self.custom[2] = float_to_percent(sim.pathogen.contagiousness)
         t = open("start_stats.md", 'r').read()
-        template = Template(t)
-        summary = template.render(population=sim.population, pathogen=sim.pathogen, c = self.custom)
-        file = open("logs/" + self.file_name, "w+")
+        summary = t.format(
+            sim.population_size, 
+            float_to_percent(sim.percent_vaccinated), 
+            sim.pathogen.name, 
+            float_to_percent(sim.pathogen.mortality_rate), float_to_percent(sim.pathogen.contagiousness), sim.initial_infected)
+        # template = Template(t)
+        # summary = template.render(population=sim.population, pathogen=sim.pathogen, c = self.custom)
+        file = open("summaries/" + self.file_name, "w+")
         file.write(summary)
         file.close()
 
-    def write_end_stats(self, sim):
+    def write_end_stats(self, sim, steps):
+        # t = open("end_stats.md", 'r').read()
+        # template = Template(t)
+        # dead = len(sim.population.the_dead)
+        # summary = template.render(population=sim.population, pathogen=sim.pathogen, dead=dead)
         t = open("end_stats.md", 'r').read()
-        template = Template(t)
-        dead = len(sim.population.the_dead)
-        summary = template.render(population=sim.population, pathogen=sim.pathogen, dead=dead)
-        file = open("logs/" + self.file_name, "a")
+        summary = t.format(
+            len(sim.population.the_dead),
+            len(sim.population.the_living),
+            steps
+            )
+        file = open("summaries/" + self.file_name, "a")
         file.write(summary)
         file.close()
 

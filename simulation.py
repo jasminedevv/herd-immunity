@@ -80,15 +80,23 @@ class Simulation(object):
     
     def run(self, logger, time_steps=10, looping=True):
         id = 0
+        steps = 0
+        logger.add_file_name(self)
         logger.write_start_stats(self)
+        print("Start stats written.")
         while looping and len(self.population.the_living) >= 0 and self.population.get_number_infected() > 0 and self.population.get_number_immune() is not len(self.population.the_living):
+            
             self.population.mingle(2, self.pathogen)
             logger.log(self, id)
             id += 1
             self.population.bury_the_dead()
             logger.log(self, id)
             id += 1
-        logger.write_end_stats(self)
+            steps += 1
+            print("Finished step", steps)
+            print("Dead:", len(self.population.the_dead))
+        print("End stats written.")
+        logger.write_end_stats(self, steps)
 
 
 def test():
@@ -104,7 +112,6 @@ def test():
 
     sim.get_user_input()
     sim.initialize()
-    logger.write_start_stats(sim)
     sim.run(logger)
 
 

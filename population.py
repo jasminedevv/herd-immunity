@@ -4,7 +4,7 @@ from logger import logger as l
 random.seed(42)
 
 # here temporarily until I finish the mvp
-names = "Alice, Bob, Charlie, Donna, Elizabeth, Fred"
+names = "Alice, Bob, Charlie, Donna, Elizabeth, Fred, Greg, Hailey, Irene, Jake, Katie, Leroy, Mary, Nick, Olivia, Patrick, Quark, Riley, Sarah"
 
 names = names.split(",")
 
@@ -13,13 +13,12 @@ class Person(object):
         # TODO: turn the infection var into a dictionary of pathogens with whether or not the person is vaccinated to them
         self.id = id
         self.name = random.choice(names)
-        # should be None of a pathogen object
+        # should be None or a pathogen object
         self.infection = infection
         self.is_vaccinated = is_vaccinated
         self.is_dead = False
         self.greetings = []
-        self.immune = False
-    # decides if a person 
+        self.has_been_sick = False
     def print_greeting(self):
         print("Hello! My name is", self.name, "(human #", self.id,")")
         if self.is_vaccinated:
@@ -36,21 +35,22 @@ class Person(object):
             # print(self.name, "(human #", self.id,") was vaccinated and did not die.\n")
             return False
         elif self.is_vaccinated:
-            l.log_line("{} did not die because they were immune.".format(self.name))
+            l.log_line("\n{} did not die because they were immune.".format(self.name))
             return False
         else:
             luck = random.uniform(0, 1)
             if luck > self.infection.mortality_rate:
-                l.log_line("{} survives the infection!".format(self.name))
+                l.log_line("\n{} survives the infection!".format(self.name))
                 # person survives the infection and stops being sick, they are now immune to the virus
                 self.infection = None
                 # could say if pathogen is a virus they become vaccinated
                 self.is_vaccinated = True
+                self.has_been_sick = True
                 return False
             else:
                 # person dies
                 # add id after name
-                l.log_line("{}, human#{}, has died of {}.".format(self.name, self.id, self.infection.name))
+                l.log_line("\n{}, human#{}, has died of {}.".format(self.name, self.id, self.infection.name))
                 self.is_dead = True
                 return True
 
