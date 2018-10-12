@@ -4,18 +4,31 @@ Simulation does not QUITE pass the requirements. HOWEVER, I did do this entire t
 Should I pass the class? Well of course *I* think I should. I do think I have the required proficiency to progress to CS1.2. (Plus you know I aced the final)
 
 ## State of the project:
-### Example Output
+### Example Summary
 ``` python
 ## Herd Immunity Simulation:
 ### Starting Stats
-Population Size: 100
+Population Size: 1000
 Vaccination Percentage: 10%
 Virus Name: cooties
 Mortality Rate: 40%
 Basic Reproduction Number: 60%
 People Initially Infected: 5
 ### Post-Infection Population Stats:
-People who died: 36
-People who survived the infection: 64
-Steps to pathogen burnout: 1
+People who died: 346
+People who survived the infection: 654
+Steps to pathogen burnout: 3
+```
+### Example Log
+``` python
+0: 1000 infected, 0 dead, 100 now immune
+Donna survives the infection!
+Alice survives the infection!
+Irene survives the infection!
+Hailey, human#3, has died of cooties.
+....
+Charlie did not die because they were immune.
+Patrick did not die because they were immune.
+Katie did not die because they were immune.
+5: 634 infected, 346 dead, 654 now immune
 ```
