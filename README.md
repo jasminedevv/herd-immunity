@@ -30,5 +30,5 @@ Hailey, human#3, has died of cooties.
 Charlie did not die because they were immune.
 Patrick did not die because they were immune.
 Katie did not die because they were immune.
-5: 634 infected, 346 dead, 654 now immune
+5: 346 dead, 654 now immune
 ```
