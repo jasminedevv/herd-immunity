@@ -84,7 +84,14 @@ class Simulation(object):
         logger.add_file_name(self)
         logger.write_start_stats(self)
         print("Start stats written.")
-        while looping and len(self.population.the_living) >= 0 and self.population.get_number_infected() > 0 and self.population.get_number_immune() is not len(self.population.the_living):
+        # while everyone is not dead
+        # AND there are still people infected
+        # AND everyone alive isn't immune
+        while 
+        looping 
+        and len(self.population.the_living) >= 0 
+        and self.population.get_number_infected() > 0 
+        and self.population.get_number_immune() is not len(self.population.the_living):
             
             self.population.mingle(2, self.pathogen)
             logger.log(self, id)

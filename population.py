@@ -128,8 +128,9 @@ class Population(object):
     def mingle(self, interactions, pathogen):
         # interactions defines how sociable people in this population are
         # each person interacts with a number of friends equal to interactions
+        # THIS is what's broken
         for person in self.the_living:
-            person.greetings = []
+            # person.greetings = []
             while len(person.greetings) < interactions:
                 friend = random.choice(self.the_living)
                 # makes sure neither of them have seen each other today
