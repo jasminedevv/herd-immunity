@@ -1,3 +1,4 @@
 {
+  "test_sim.py::test_sim": true,
   "tests/pathogen_test.py": true
 }

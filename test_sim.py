@@ -1,9 +1,12 @@
 import pytest
 from pathogen import Pathogen
 from population import Population
+# from simulation import Simulation
 import random
 import io
 import sys
+
+# from logger import logger
 
 # TEST PATHOGEN
 def test_print_pathogen_info():
@@ -32,6 +35,7 @@ def test_did_die():
     virus.mortality_rate = 1.0
     my_pop.the_living[0].infection = virus
     my_pop.the_living[0].is_vaccinated = False
+    assert not my_pop.the_living[0].did_die()
     assert my_pop.the_living[0].did_die()
     virus.mortality_rate = 0.0
     assert not my_pop.the_living[3].did_die()
@@ -84,28 +88,29 @@ def test_init():
     assert p_pop.the_living[0].infection is p_virus
     assert p_pop.the_living[1].is_vaccinated is True
 
-
 def test_get_number_infected():
-    assert p_pop.get_number_infected() is 1
-    for person in p_pop.the_living:
+    p1_pop = Population("New York", 20, p_virus, 0, 0.5)
+    assert p1_pop.get_number_infected() is 0
+    p1_pop.the_living[0].infection = p_virus
+    assert p1_pop.get_number_infected() is 1
+    for person in p1_pop.the_living:
         person.infection = p_virus
-    assert p_pop.get_number_infected() is 10
+    assert p1_pop.get_number_infected() is 20
+    p1_pop.the_living[1].infection = None
+    p1_pop.the_living[0].infection = None
+    assert p1_pop.get_number_infected() is 18
 
 def test_get_number_immune():
-    p1_pop = Population("New York", 10, p_virus, 1, 0.5)
-    assert p1_pop.get_number_immune() is 5
-    p1_pop = Population("New York", 10, p_virus, 1, 1.0)
+    p1_pop = Population("New York", 20, p_virus, 1, 0.5)
     assert p1_pop.get_number_immune() is 10
-    p1_pop.the_living[1].is_vaccinated = False
-    print("TESTING FOR BELOW HUMAN:")
-    p1_pop.the_living[1].print_greeting()
-    assert p1_pop.get_number_immune() is 9
-    # seems to not count the 0th human
+    p1_pop = Population("New York", 20, p_virus, 1, 1.0)
+    assert p1_pop.get_number_immune() is 20
 
 def test_mingle():
     pass
     # TODO not sure how to test this effectively
 
+# commented out because no longer relevant
 def test_bury_the_dead():
     p2_virus = Pathogen("Libertarianism", 1.0, 1.0)
     p2_pop = Population("Rapture", 6, p2_virus, 6, 0.0)
@@ -113,6 +118,7 @@ def test_bury_the_dead():
     assert len(p2_pop.the_living) is 6
     assert len(p2_pop.the_dead) is 0
     for person in p2_pop.the_living:
+        person.newly_infected = False
         assert not person.is_dead
     for person in p2_pop.the_living:
         assert person.infection is p2_virus
@@ -130,4 +136,28 @@ def test_bury_the_dead():
         print(person.id)
     assert len(p2_pop.the_living) is 0
     assert len(p2_pop.the_dead) is 6
-    
+
+def test_newly_infected():
+    p3_virus = Pathogen("This class", 1.0, 1.0)
+    p3_pop = Population("My brain cells", 2, p3_virus, 2, 0.0)
+    assert p3_pop.the_living[0].newly_infected
+    assert not p3_pop.the_living[0].did_die()
+    assert not p3_pop.the_living[0].newly_infected
+    assert p3_pop.the_living[0].did_die()
+
+# TEST RUN LOOP
+
+# def test_sim():
+    # sim = Simulation()
+
+    # sim.pathogen_name = "Ebola"
+    # sim.mortality_rate = 1.0
+    # sim.infectiousness = 1.0
+    # sim.population_size = 10
+    # sim.initial_infected = 10
+    # sim.percent_vaccinated = 0.0
+
+    # sim.initialize()
+    # sim.run(logger)
+
+    # assert len(sim.population.the_living) is 0

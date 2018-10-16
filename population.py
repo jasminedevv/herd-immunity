@@ -16,9 +16,11 @@ class Person(object):
         # should be None or a pathogen object
         self.infection = infection
         self.is_vaccinated = is_vaccinated
+        self.newly_infected = False
         self.is_dead = False
         self.greetings = []
         self.has_been_sick = False
+
     def print_greeting(self):
         print("------------------")
         print("Hello! My name is", self.name, "(human #", self.id,")")
@@ -38,6 +40,9 @@ class Person(object):
             return False
         elif self.is_vaccinated:
             # l.log_line("\n{}, human#{} did not die because they were immune.".format(self.name, self.id))
+            return False
+        elif self.newly_infected:
+            self.newly_infected = False
             return False
         else:
             luck = random.uniform(0, 1)
@@ -64,8 +69,9 @@ class Person(object):
             l.log_line("\n{}, human#{} did not become infected.".format(self.name, self.id))
             return False
         else:
-            # print("And they catch it!", self.name, "is now infected with", pathogen.name)
+            # person becomes infected
             self.infection = pathogen
+            self.newly_infected = True
             l.log_line("\n{}, human#{} has contracted {}!".format(self.name, self.id, self.infection.name))
             return True
     
@@ -73,24 +79,24 @@ class Person(object):
         # minor shortcut. If one of them is vaccinated there can be no transmission
         # TODO log these interactions
         if self.is_vaccinated or friend.is_vaccinated:
-            l.log_line("\nNO TRANSMISSION: {}, human#{} and human#{} interacted but one of them was either vaccinated or immune.".format(self.name, self.id, friend.id))
+            l.log_line("\n{}, human#{} and human#{} interacted but one of them was either vaccinated or immune.".format(self.name, self.id, friend.id))
             return False # tested
         # neither is infected
         elif self.infection is None and friend.infection is None:
-            l.log_line("\nNO TRANSMISSION: {}, human#{} and human#{} interacted but they were both healthy.".format(self.name, self.id, friend.id))
+            l.log_line("\n{}, human#{} and human#{} interacted but they were both healthy.".format(self.name, self.id, friend.id))
             return False
         # both are infected so nothing is transmitted
         elif self.infection is not None and friend.infection is not None:
-            l.log_line("\nNO TRANSMISSION: {}, human#{} and human#{} interacted but they were both infected.".format(self.name, self.id, friend.id))
+            l.log_line("\n{}, human#{} and human#{} interacted but they were both infected.".format(self.name, self.id, friend.id))
             return False
         # if self is infected but friend is not, expose friend to infection
         elif self.infection is not None and friend.infection is None:
-            l.log_line("\nINFECTION TRANSMITTED: {}, human#{} has exposed {}, human#{} to {}!".format(self.name, self.id, friend.name, friend.id, self.infection.name))
+            l.log_line("\n{}, human#{} has exposed {}, human#{} to {}!".format(self.name, self.id, friend.name, friend.id, self.infection.name))
             friend.battle_infection(self.infection)
             return True # tested
         # if self is not infected but friend is, expose self to infection
         elif self.infection is None and friend.infection is not None:
-            l.log_line("\nINFECTION TRANSMITTED: {}, human#{} has exposed {}, human#{} to {}!".format(friend.name, friend.id, self.name, self.id, friend.infection.name))
+            l.log_line("\n{}, human#{} has exposed {}, human#{} to {}!".format(friend.name, friend.id, self.name, self.id, friend.infection.name))
             self.battle_infection(friend.infection)
             return True # tested
 
@@ -107,15 +113,19 @@ class Population(object):
         # initialize patient zeroes
         id = 0
         for i in range(0, initial_infected):
-            self.the_living += [Person(id, False, infection=pathogen)]
+            person = Person(id, False, infection=pathogen)
+            person.newly_infected = True
             id += 1
+            self.the_living += [person]
         # initialize number of vaccinated peeps
         for i in range(0, vaccinated_people_num):
-            self.the_living += [Person(id, True, infection=None)]
+            person = Person(id, True, infection=None)
+            self.the_living += [person]
             id += 1
         # add everyone else to the population
         for i in range(0, (people - (vaccinated_people_num + initial_infected))):
-            self.the_living += [Person(id, False, infection=None)]
+            person = Person(id, False, infection=None)
+            self.the_living += [person]
             id += 1
 
     def get_number_infected(self):
@@ -130,7 +140,6 @@ class Population(object):
         people_immune = 0
         for person in self.the_living:
             if person.is_vaccinated:
-                # person.print_greeting()
                 people_immune +=1
         return people_immune
 
@@ -154,7 +163,9 @@ class Population(object):
         poppable = []
         index = 0
         for person in self.the_living:
-            if person.did_die():
+            if person.newly_infected:
+                person.newly_infected = False
+            elif person.did_die():
                 self.the_dead.append(person)
                 poppable += [index]
         return poppable

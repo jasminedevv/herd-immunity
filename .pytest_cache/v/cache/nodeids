@@ -7,5 +7,6 @@
   "test_sim.py::test_get_number_infected",
   "test_sim.py::test_get_number_immune",
   "test_sim.py::test_mingle",
-  "test_sim.py::test_bury_the_dead"
+  "test_sim.py::test_bury_the_dead",
+  "test_sim.py::test_newly_infected"
 ]
