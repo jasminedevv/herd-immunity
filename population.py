@@ -28,6 +28,8 @@ class Person(object):
             print("I am vaccinated.")
         else:
             print("I am not vaccinated.")
+        if self.has_been_sick:
+            print("I survived a disease.")
         if self.infection is None:
             print("Currently, I am not infected with anything.")
         else:
@@ -135,7 +137,6 @@ class Population(object):
                 people_infected +=1
         return people_infected
 
-    # doesn't seem to count the 0th human???
     def get_number_immune(self):
         people_immune = 0
         for person in self.the_living:
@@ -143,23 +144,34 @@ class Population(object):
                 people_immune +=1
         return people_immune
 
+    def get_number_newly_infected(self):
+        people = 0
+        for person in self.the_living:
+            if person.newly_infected:
+                people +=1
+        return people
+
     # TODO: currently bury the dead should wipe all infection from the game
     def mingle(self, interactions, pathogen):
+        if len(self.the_living) <= interactions:
+            print("Everyone died :(")
+            return False
+        else:
         # interactions defines how sociable people in this population are
         # each person interacts with a number of friends equal to interactions
-        for person in self.the_living:
-            person.greetings = []
-            while len(person.greetings) < interactions:
-                # print("My name is {} and I have interacted with {}".format(person.id, person.greetings))
-                friend = random.choice(self.the_living)
-                # makes sure neither of them have seen each other today
-                if friend not in person.greetings and person not in friend.greetings:
-                # TODO adapt this for multiple pathogens
-                    person.interact(friend)
-                    person.greetings.append(friend)
+            for person in self.the_living:
+                person.greetings = []
+                while len(person.greetings) < interactions:
+                    # print("My name is {} and I have interacted with {}".format(person.id, person.greetings))
+                    friend = random.choice(self.the_living)
+                    # makes sure neither of them have seen each other today
+                    if friend not in person.greetings and person not in friend.greetings:
+                    # TODO adapt this for multiple pathogens
+                        person.interact(friend)
+                        person.greetings.append(friend)
+            return True
 
     def get_dead(self):
-        list_of_dead = []
         poppable = []
         index = 0
         for person in self.the_living:

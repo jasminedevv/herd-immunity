@@ -63,10 +63,11 @@ class Logger(object):
         infected = sim.population.get_number_infected()
         dead = len(sim.population.the_dead)
         now_immune = sim.population.get_number_immune()
+        new_infected = sim.population.get_number_newly_infected()
 
-        info = "{}: {} dead, {} infected, {} now immune".format(id, dead, infected, now_immune)
+        info = "{}: {} dead, {} newly infected out of {} sick, {} now immune".format(id, dead, new_infected, infected, now_immune)
         print(info)
-        file.write("\n"+info+"\n")
+        file.write("\n\n"+info+"\n\n")
 
         file.close()
 

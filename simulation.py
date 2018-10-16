@@ -95,22 +95,54 @@ class Simulation(object):
         # while everyone is not dead
         # AND there are still people infected
         # AND everyone alive isn't immune
-        logger.log(self, id)
+
+        # logger.log(self, id)
+        print("Initiating loop")
         while looping and len(self.population.the_living) >= 0 and self.population.get_number_infected() > 0 and self.population.get_number_immune() is not len(self.population.the_living) and (len(self.population.the_dead) + self.population.get_number_immune()) <= self.population_size:
-            # the infected spread disease
-            self.population.mingle(2, self.pathogen)
-            logger.log(self, id)
-            id += 1
-            # infected die except newly_infected will be set to False
+            initial_infected = self.population.get_number_infected()
+            initial_dead = len(self.population.the_dead)
+            # ------------------- #
             self.population.bury_the_dead()
-            steps += 1
+            # ------------------- #
             logger.log(self, id)
             id += 1
+            now_infected = self.population.get_number_infected()
+            now_dead = len(self.population.the_dead)
+            print("{}: {} died but {} got better.".format(id,(now_dead - initial_dead), (initial_infected - now_infected)))
+            id += 1
+            steps += 1
+
+            initial_infected = self.population.get_number_infected()
+            # the infected spread disease
+            # ------------------- #
+            looping = self.population.mingle(10, self.pathogen)
+            # ------------------- #
+            now_infected = self.population.get_number_infected()
+            print("{}: {} people have become infected.".format(id, now_infected - initial_infected))
+            id += 1
+            logger.log(self, id)
+            id += 1
+            
+            # infected die except newly_infected will be set to False
+            
+            # infected = self.population.get_number_infected()
+            # dead = len(self.population.the_dead)
+            # now_immune = self.population.get_number_immune()
+            # new_infected = self.population.get_number_newly_infected()
+
+            # print("{}: {} dead, {} newly infected out of {} sick, {} now immune".format(id, dead, new_infected, infected, now_immune))
             print("Finished step", steps)
+            id = 0
 
         print("End stats written.")
         print("Simulation finished! Check the most recent logs and summaries to see the results.")
         logger.write_end_stats(self, steps)
+        print("\nTHE LIVING:")
+        # for person in self.population.the_living:
+        #     person.print_greeting()
+        # print("\nTHE DEAD:")
+        # for person in self.population.the_dead:
+        #     person.print_greeting()
 
 
 def test():
