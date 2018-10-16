@@ -3,7 +3,7 @@ This simulation can be run directly from the command line using the following fo
 ```python
 python3 simulation.py <population size> <vaccination percentage> <pathogen name> <mortality rate> <infectiousness> <initial infected population>. 
 ```
-
+It should work without dependencies but just in case, try this if you get an error:
 ```python
 virtualenv env
 ```
@@ -45,3 +45,4 @@ Donna, human#0 has exposed  Sarah, human#638 to laughing too hard!
  Irene, human#998 survives the infection!
  Katie, human#999 did not die because they were immune.
 5: 613 infected, 364 dead, 636 now immune
+```
