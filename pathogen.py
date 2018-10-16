@@ -1,16 +1,13 @@
 # import stuff
 
-
 class Pathogen:
     def __init__(self, name, mortality_rate, contagiousness):
         # asserts here for sanity
         # TODO: sanitize these somewhere else
-        assert isinstance(name, str)
-        assert isinstance(mortality_rate, float)
-        assert isinstance(contagiousness, float)
         self.name = name
         self.mortality_rate = mortality_rate
         self.contagiousness = contagiousness
+
     def print_info(self, do_print=True):
         # pass in False if you just want the string
         # make our floats pretty

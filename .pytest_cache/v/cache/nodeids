@@ -1,1 +1,11 @@
-[]
+[
+  "test_sim.py::test_print_pathogen_info",
+  "test_sim.py::test_did_die",
+  "test_sim.py::test_battle_infection",
+  "test_sim.py::test_interact",
+  "test_sim.py::test_init",
+  "test_sim.py::test_get_number_infected",
+  "test_sim.py::test_get_number_immune",
+  "test_sim.py::test_mingle",
+  "test_sim.py::test_bury_the_dead"
+]

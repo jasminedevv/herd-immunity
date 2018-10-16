@@ -44,7 +44,7 @@ class Logger(object):
         t = open("end_stats.md", 'r').read()
         summary = t.format(
             len(sim.population.the_dead),
-            len(sim.population.the_living),
+            len(sim.population.the_living) - sim.population.vaccinated_people_num,
             steps
             )
         file = open("summaries/" + self.file_name, "a")
@@ -64,9 +64,9 @@ class Logger(object):
         dead = len(sim.population.the_dead)
         now_immune = sim.population.get_number_immune()
 
-        info = "\n{}: {} infected, {} dead, {} now immune".format(id, infected, dead, now_immune)
-
-        file.write(info)
+        info = "{}: {} dead, {} infected, {} now immune".format(id, dead, infected, now_immune)
+        print(info)
+        file.write("\n"+info+"\n")
 
         file.close()
 

@@ -96,10 +96,11 @@ class Simulation(object):
         # AND there are still people infected
         # AND everyone alive isn't immune
         while looping and len(self.population.the_living) >= 0 and self.population.get_number_infected() > 0 and self.population.get_number_immune() is not len(self.population.the_living):
-            # people will interact with 2 other per time step
-            self.population.mingle(20, self.pathogen)
+            # people will interact with 20 other per time step
+            self.population.mingle(1, self.pathogen)
             logger.log(self, id)
             id += 1
+            # now that bury the dead is fixed this entire loop is broken
             self.population.bury_the_dead()
             logger.log(self, id)
             id += 1
@@ -109,6 +110,7 @@ class Simulation(object):
             immune = self.population.get_number_immune()
             if dead+immune >= self.population_size:
                 looping = False
+            self.population.print_info()
 
         print("End stats written.")
         print("Simulation finished! Check the most recent logs and summaries to see the results.")
