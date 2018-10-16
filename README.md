@@ -1,21 +1,47 @@
-### Appeal
-Simulation does not QUITE pass the requirements. HOWEVER, I did do this entire thing from scratch without the outline because I know how to write classes but I'm not great at structuring big projects like this. I think I was correct and that I did learn more by doing it this way but as a result will not fulfill the requirements on time. 
+### Instructions
+This simulation can be run directly from the command line using the following format:
+```python
+python3 simulation.py <population size> <vaccination percentage> <pathogen name> <mortality rate> <infectiousness> <initial infected population>. 
+```
 
-Should I pass the class? Well of course *I* think I should. I do think I have the required proficiency to progress to CS1.2. (Plus you know I aced the final)
+```python
+virtualenv env
+```
+```python
+. env/bin/activate
+```
+```python
+pip install -r requirements.txt
+```
+Try it with these parameters from the command line:
+```python
+python3 simulation.py 100 0.1 "laughing too hard" 0.4 0.6 5
+```
 
 ## State of the project:
-### Example Output
+### Example Summary
 ``` python
 ## Herd Immunity Simulation:
 ### Starting Stats
-Population Size: 100
+Population Size: 1000
 Vaccination Percentage: 10%
-Virus Name: cooties
+Virus Name: laughing too hard
 Mortality Rate: 40%
 Basic Reproduction Number: 60%
 People Initially Infected: 5
 ### Post-Infection Population Stats:
-People who died: 36
-People who survived the infection: 64
-Steps to pathogen burnout: 1
+People who died: 364
+People who survived the infection: 636
+Steps to pathogen burnout: 3
 ```
+### Example Log
+```python
+Donna, human#0 has exposed  Sarah, human#638 to laughing too hard!
+ Sarah, human#638 did not become infected.
+ Donna, human#0 has exposed  Leroy, human#665 to laughing too hard!
+ Leroy, human#665 has contracted laughing too hard!
+...81633 lines later
+ Nick, human#994 did not die because they were immune.
+ Irene, human#998 survives the infection!
+ Katie, human#999 did not die because they were immune.
+5: 613 infected, 364 dead, 636 now immune

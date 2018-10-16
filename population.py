@@ -35,12 +35,12 @@ class Person(object):
             # print(self.name, "(human #", self.id,") was vaccinated and did not die.\n")
             return False
         elif self.is_vaccinated:
-            l.log_line("\n{} did not die because they were immune.".format(self.name))
+            l.log_line("\n{}, human#{} did not die because they were immune.".format(self.name, self.id))
             return False
         else:
             luck = random.uniform(0, 1)
             if luck > self.infection.mortality_rate:
-                l.log_line("\n{} survives the infection!".format(self.name))
+                l.log_line("\n{}, human#{} survives the infection!".format(self.name, self.id))
                 # person survives the infection and stops being sick, they are now immune to the virus
                 self.infection = None
                 # could say if pathogen is a virus they become vaccinated
@@ -57,34 +57,38 @@ class Person(object):
     def battle_infection(self, pathogen):
         luck = random.uniform(0, 1)
         if luck > pathogen.contagiousness:
-            # print("They fight off the infection and do not contract it.")
             # person does not catch the infection
+            l.log_line("\n{}, human#{} did not become infected.".format(self.name, self.id))
             return False
         else:
             # print("And they catch it!", self.name, "is now infected with", pathogen.name)
             self.infection = pathogen
+            l.log_line("\n{}, human#{} has contracted {}!".format(self.name, self.id, self.infection.name))
             return True
     
     def interact(self, friend):
         # minor shortcut. If one of them is vaccinated there can be no transmission
+        # TODO log these interactions
         if self.is_vaccinated or friend.is_vaccinated:
             do_nothing = None
-            # print("No pathogen was transmitted between human#{} and human#{}.".format(self.id, friend.id))
+            l.log_line("\n{}, human#{} and human#{} interacted but one of them was either vaccinated or immune.".format(self.name, self.id, friend.id))
         # neither is infected
         if self.infection is None and friend.infection is None:
             do_nothing = None
-            # print("human#{} and human#{} interacted but they were both healthy.".format(self.id, friend.id))
+            l.log_line("\n{}, human#{} and human#{} interacted but they were both healthy.".format(self.name, self.id, friend.id))
         # both are infected so nothing is transmitted
         elif self.infection is not None and friend.infection is not None:
             do_nothing = None
-            # print("human#{} and human#{} interacted but they were both infected.".format(self.id, friend.id))
+            l.log_line("\n{}, human#{} and human#{} interacted but they were both infected.".format(self.name, self.id, friend.id))
         # if self is infected but friend is not, expose friend to infection
         elif self.infection is not None and friend.infection is None:
-            # print("human#{} has exposed human#{} to {}!".format(self.id, friend.id, self.infection.name))
+            l.log_line("\n{}, human#{} has exposed {}, human#{} to {}!".format(self.name, self.id, friend.name, friend.id, self.infection.name))
+
             friend.battle_infection(self.infection)
         # if self is not infected but friend is, expose self to infection
         elif self.infection is None and friend.infection is not None:
-            # print("human#{} has exposed human#{} to {}!".format( friend.id, self.id, friend.infection.name))
+            l.log_line("\n{}, human#{} has exposed {}, human#{} to {}!".format(friend.name, friend.id, self.name, self.id, friend.infection.name))
+
             self.battle_infection(friend.infection)
 
 class Population(object):
@@ -122,6 +126,7 @@ class Population(object):
         for person in self.the_living:
             if person.is_vaccinated:
                 people_immune +=1
+        print(people_immune)
         return people_immune
 
     # TODO: currently bury the dead wipes all infection from the game
@@ -130,8 +135,9 @@ class Population(object):
         # each person interacts with a number of friends equal to interactions
         # THIS is what's broken
         for person in self.the_living:
-            # person.greetings = []
+            person.greetings = []
             while len(person.greetings) < interactions:
+                # print("My name is {} and I have interacted with {}".format(person.id, person.greetings))
                 friend = random.choice(self.the_living)
                 # makes sure neither of them have seen each other today
                 if friend not in person.greetings and person not in friend.greetings:

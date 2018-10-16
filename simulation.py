@@ -13,7 +13,7 @@ class Simulation(object):
     # ERROR HANDLING
     # this function is called if the user inputs something incorrectly
     def user_error(self):
-        print("This simulation can be run directly from the command line using the following format:\n python3 simulation.py <population size> <vaccination percentage> <pathogen name> <mortality rate> <infectiousness> <initial infected population>. It can also run interactively. Just type python3 simulation.py.\n")
+        print("This simulation can be run directly from the command line using the following format:\n python3 simulation.py <population size> <vaccination percentage> <pathogen name> <mortality rate> <infectiousness> <initial infected population>. Check the README for an example. It can also run interactively. Just type python3 simulation.py.\n")
         # TODO: make it so you don't have to start from scratch if you make one mistake
         self.get_user_input(user_messed_up=True)
 
@@ -83,17 +83,21 @@ class Simulation(object):
         steps = 0
         logger.add_file_name(self)
         logger.write_start_stats(self)
+
+        print("Population size:", self.population_size)
+        print("Percent Vaccinated:", self.percent_vaccinated)
+        print("Pathogen Name:", self.pathogen_name)
+        print("Mortality Rate:", self.mortality_rate)
+        print("Infectiousness:", self.infectiousness)
+        print("Initial Infected:", self.initial_infected)
+
         print("Start stats written.")
         # while everyone is not dead
         # AND there are still people infected
         # AND everyone alive isn't immune
-        while 
-        looping 
-        and len(self.population.the_living) >= 0 
-        and self.population.get_number_infected() > 0 
-        and self.population.get_number_immune() is not len(self.population.the_living):
-            
-            self.population.mingle(2, self.pathogen)
+        while looping and len(self.population.the_living) >= 0 and self.population.get_number_infected() > 0 and self.population.get_number_immune() is not len(self.population.the_living):
+            # people will interact with 2 other per time step
+            self.population.mingle(20, self.pathogen)
             logger.log(self, id)
             id += 1
             self.population.bury_the_dead()
@@ -101,8 +105,13 @@ class Simulation(object):
             id += 1
             steps += 1
             print("Finished step", steps)
-            print("Dead:", len(self.population.the_dead))
+            dead = len(self.population.the_dead)
+            immune = self.population.get_number_immune()
+            if dead+immune >= self.population_size:
+                looping = False
+
         print("End stats written.")
+        print("Simulation finished! Check the most recent logs and summaries to see the results.")
         logger.write_end_stats(self, steps)
 
 

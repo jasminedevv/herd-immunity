@@ -20,3 +20,5 @@ def test_bury_the_dead():
     virus.mortality_rate = 1.0
     my_pop.the_living[2].infection = virus
     assert my_pop.the_living[2].did_die()
+
+    
